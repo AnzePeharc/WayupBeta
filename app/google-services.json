@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "968157018008",
+    "project_id": "wayupbeta-e618b",
+    "storage_bucket": "wayupbeta-e618b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968157018008:android:d7910a25860d23bb37dded",
+        "android_client_info": {
+          "package_name": "com.example.wayupbeta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968157018008-s4c2nouqs78tks9uv252n8oeu8ss13ls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaqnPSghIHZ5g8naiVb5iVVSGXAUdrjlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968157018008-s4c2nouqs78tks9uv252n8oeu8ss13ls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
