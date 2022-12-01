@@ -1,145 +1,136 @@
 package com.example.wayupbeta;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.wayupbeta.BoulderInfo;
-import com.example.wayupbeta.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    //widgets
 
-    private Button add_boulder, library;
-    // creating a variable for our list view,
-    // arraylist and firebase Firestore.
-    ListView coursesLV;
-    ArrayList<BoulderInfo> dataModalArrayList;
+    private Button uploadBtn, showAllBtn;
+    private ImageView imageView;
+    private ProgressBar progressBar;
 
-    FirebaseDatabase firebaseDatabase;
-
-    // creating a variable for our
-    // Database Reference for Firebase.
-    DatabaseReference databaseReference;
-
-
+    //vars
+    private DatabaseReference root = FirebaseDatabase.getInstance("https://wayupbeta-e618b-default-rtdb.europe-west1.firebasedatabase.app").getReference("Boulders");
+    private StorageReference reference = FirebaseStorage.getInstance().getReference();
+    private Uri imageUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // below line is use to initialize our variables
-        coursesLV = findViewById(R.id.idLVCourses);
-        dataModalArrayList = new ArrayList<>();
 
-        // initializing our variable for firebase
-        // firestore and getting its instance.
-        // below line is used to get the instance
-        // of our Firebase database.
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        uploadBtn = findViewById(R.id.upload_btn);
+        showAllBtn = findViewById(R.id.library_btn);
+        progressBar = findViewById(R.id.progress_bar);
+        imageView = findViewById(R.id.imageview);
 
-        // below line is used to get
-        // reference for our database.
-        databaseReference = firebaseDatabase.getReference("Data");
+        progressBar.setVisibility(View.INVISIBLE);
 
-        // here we are calling a method
-        // to load data in our list view.
-        loadDatainListview();
-    /*
-        add_boulder = findViewById(R.id.add_new);
-        add_boulder.setOnClickListener(new View.OnClickListener() {
+        showAllBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, AddBoulder.class);
-                //myIntent.putExtra("key", value); //Optional parameters
-                MainActivity.this.startActivity(myIntent);
+                startActivity( new Intent(MainActivity.this , LibraryActivity.class));
             }
         });
-        library = findViewById(R.id.library);
-        library.setOnClickListener(new View.OnClickListener() {
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, LVAdapter.class);
-                //myIntent.putExtra("key", value); //Optional parameters
-                MainActivity.this.startActivity(myIntent);
-                //TODO implement library class with listview from Firebase
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent , 2);
             }
         });
-    */
+
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imageUri != null){
+                    uploadToFirebase(imageUri);
+                }else{
+                    Toast.makeText(MainActivity.this, "Please Select Image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-        private void loadDatainListview() {
-            // below line is use to get data from Firebase
-            // firestore using collection in android.
-            databaseReference.child("Boulders").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            BoulderInfo boulder = dataSnapshot.getValue(BoulderInfo.class);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                            Toast.makeText(MainActivity.this, "Name: " + boulder.getBoulderName() + "\n" +
-                                    "ImgUrl: " + boulder.getBoulderImageUrl(), Toast.LENGTH_LONG).show();
-                        }
+        if (requestCode ==2 && resultCode == RESULT_OK && data != null){
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+            imageUri = data.getData();
+            imageView.setImageURI(imageUri);
 
-                        }
-                    });
-            databaseReference.collection("Data").get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            // after getting the data we are calling on success method
-                            // and inside this method we are checking if the received
-                            // query snapshot is empty or not.
-                            if (!queryDocumentSnapshots.isEmpty()) {
-                                // if the snapshot is not empty we are hiding
-                                // our progress bar and adding our data in a list.
-                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                for (DocumentSnapshot d : list) {
-                                    // after getting this list we are passing
-                                    // that list to our object class.
-                                    DataModal dataModal = d.toObject(DataModal.class);
-
-                                    // after getting data from Firebase we are
-                                    // storing that data in our array list
-                                    dataModalArrayList.add(dataModal);
-                                }
-                                // after that we are passing our array list to our adapter class.
-                                CoursesLVAdapter adapter = new CoursesLVAdapter(MainActivity.this, dataModalArrayList);
-
-                                // after passing this array list to our adapter
-                                // class we are setting our adapter to our list view.
-                                coursesLV.setAdapter(adapter);
-                            } else {
-                                // if the snapshot is empty we are displaying a toast message.
-                                Toast.makeText(MainActivity.this, "No data found in Database", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // we are displaying a toast message
-                            // when we get any error from Firebase.
-                            Toast.makeText(MainActivity.this, "Fail to load data..", Toast.LENGTH_SHORT).show();
-                        }
-                    });
         }
+    }
+
+    private void uploadToFirebase(Uri uri){
+
+        final StorageReference fileRef = reference.child(System.currentTimeMillis() + "." + getFileExtension(uri));
+        fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        Model model = new Model(uri.toString());
+                        String modelId = root.push().getKey();
+                        root.child(modelId).setValue(model);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(MainActivity.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        imageView.setImageResource(R.drawable.upload_succesful);
+                    }
+                });
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(MainActivity.this, "Uploading Failed !!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private String getFileExtension(Uri mUri){
+
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(mUri));
+
+    }
+
 
 }
-
