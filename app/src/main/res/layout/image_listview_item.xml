@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <!--Image view for displaying our image-->
-        <ImageView
+        <ImageButton
             android:id="@+id/list_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -23,21 +23,34 @@
             android:layout_marginBottom="8dp"
             android:background="@color/white"
             android:backgroundTint="@color/white"
-            android:padding="3dp" />
+            android:scaleType="centerCrop" />
 
         <!--Text view for displaying our text -->
         <TextView
-            android:id="@+id/idTVtext"
+            android:id="@+id/list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="40dp"
             android:layout_toEndOf="@id/list_image"
             android:padding="3dp"
-            android:text="Category Text"
+            android:text="BoulderName"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+        <TextView
+            android:id="@+id/list_grade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_toEndOf="@id/list_name"
+            android:padding="3dp"
+            android:text="BoulderGrade"
             android:textAlignment="center"
             android:textColor="@color/black" />
 
     </RelativeLayout>
+
+
 
 </androidx.cardview.widget.CardView>

@@ -12,8 +12,10 @@ import android.provider.ContactsContract;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private Button uploadBtn, showAllBtn;
     private ImageView imageView;
     private ProgressBar progressBar;
+    EditText boulder_name;
+    Spinner boulder_grade;
 
     //vars
     private DatabaseReference root = FirebaseDatabase.getInstance("https://wayupbeta-e618b-default-rtdb.europe-west1.firebasedatabase.app").getReference("Boulders");
@@ -42,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        boulder_grade = findViewById(R.id.boulder_grade);
+        boulder_name = findViewById(R.id.boulder_name);
         uploadBtn = findViewById(R.id.upload_btn);
         showAllBtn = findViewById(R.id.library_btn);
         progressBar = findViewById(R.id.progress_bar);
@@ -70,11 +75,12 @@ public class MainActivity extends AppCompatActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageUri != null){
+                if (imageUri != null && boulder_name.getText() != null){
                     uploadToFirebase(imageUri);
                 }else{
                     Toast.makeText(MainActivity.this, "Please Select Image", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
 
-                        Model model = new Model(uri.toString());
+                        Model model = new Model(uri.toString(), boulder_name.getText().toString(), boulder_grade.getSelectedItem().toString());
                         String modelId = root.push().getKey();
                         root.child(modelId).setValue(model);
                         progressBar.setVisibility(View.INVISIBLE);

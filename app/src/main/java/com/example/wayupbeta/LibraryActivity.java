@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +37,19 @@ public class LibraryActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         list = new ArrayList<>();
         adapter = new MyAdapter(this , list);
+        adapter.setOnItemClickListener(new MyAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Toast.makeText(LibraryActivity.this, "onItemClick position: " + position, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemLongClick(int position, View v) {
+
+            }
+        });
         recyclerView.setAdapter(adapter);
+
 
         root.addValueEventListener(new ValueEventListener() {
             @Override
@@ -53,4 +67,6 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

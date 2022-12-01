@@ -34,11 +34,13 @@
         android:layout_weight="0.2">
 
         <EditText
+            android:id="@+id/boulder_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="50dp"
             android:hint="Boulder Name"/>
         <Spinner
+            android:id="@+id/boulder_grade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
