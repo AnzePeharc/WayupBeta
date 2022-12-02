@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,7 +49,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return mList.size();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView imageView;
         TextView boulderName, boulderGrade;
@@ -56,8 +57,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.list_image);
+            imageView.setOnClickListener(this);
             boulderName = itemView.findViewById(R.id.list_name);
             boulderGrade = itemView.findViewById(R.id.list_grade);
+        }
+        @Override
+        public void onClick(View view) {
+
+            int position = this.getAdapterPosition();
+            Model contact = mList.get(position);
+            String name = contact.getBoulderName();
+            Toast.makeText(context, "The position is " + String.valueOf(position) +
+                    " Name: " + name, Toast.LENGTH_SHORT).show();
+
+
         }
     }
 }
