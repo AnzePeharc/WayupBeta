@@ -34,7 +34,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        // insert image into holderView
         Glide.with(context).load(mList.get(position).getImageUrl()).into(holder.imageView);
+        // insert boulder name into holderView
+        holder.boulderName.setText(mList.get(position).getBoulderName());
+        // insert boulder grade into holderView
+        holder.boulderGrade.setText(mList.get(position).getBoulderGrade());
+
     }
 
     @Override
@@ -45,10 +51,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;
+        TextView boulderName, boulderGrade;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.list_image);
+            boulderName = itemView.findViewById(R.id.list_name);
+            boulderGrade = itemView.findViewById(R.id.list_grade);
         }
     }
 }

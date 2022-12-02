@@ -37,17 +37,6 @@ public class LibraryActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         list = new ArrayList<>();
         adapter = new MyAdapter(this , list);
-        adapter.setOnItemClickListener(new MyAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Toast.makeText(LibraryActivity.this, "onItemClick position: " + position, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onItemLongClick(int position, View v) {
-
-            }
-        });
         recyclerView.setAdapter(adapter);
 
 
