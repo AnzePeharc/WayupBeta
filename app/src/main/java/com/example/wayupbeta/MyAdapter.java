@@ -17,20 +17,22 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
+    private final RecyclerViewInterface recyclerViewInterface;
     private ArrayList<Model> mList;
     private Context context;
 
-    public MyAdapter(Context context , ArrayList<Model> mList){
+    public MyAdapter(Context context , ArrayList<Model> mList, RecyclerViewInterface recyclerViewInterface){
 
         this.context = context;
         this.mList = mList;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.image_listview_item , parent ,false);
-        return new MyViewHolder(v);
+        return new MyViewHolder(v, recyclerViewInterface);
     }
 
     @Override
@@ -51,9 +53,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+
         ImageView imageView;
         TextView boulderName, boulderGrade;
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.list_image);
@@ -64,13 +67,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         @Override
         public void onClick(View view) {
 
-            int position = this.getAdapterPosition();
-            Model contact = mList.get(position);
-            String name = contact.getBoulderName();
-            Toast.makeText(context, "The position is " + String.valueOf(position) +
-                    " Name: " + name, Toast.LENGTH_SHORT).show();
-
-
+            if (recyclerViewInterface != null){
+                int position = this.getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION){
+                    recyclerViewInterface.onItemClick(view, mList.get(position).getImageUrl());
+                }
+            }
         }
     }
 }
